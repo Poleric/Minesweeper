@@ -321,3 +321,7 @@ def main():
     gui = MainGUI(root)
     gui.pack()
     gui.mainloop()
+
+
+if __name__ == "__main__":
+    main()

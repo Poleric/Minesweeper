@@ -4,7 +4,7 @@ import numpy as np
 from datetime import timedelta
 
 import sys
-from typing import Callable
+from typing import Callable, Literal
 
 LEFT_CLICK = "<Button-1>"
 RIGHT_CLICK = "<Button-2>" if sys.platform == 'darwin' else "<Button-3>"
@@ -145,51 +145,64 @@ class MainGUI(Frame):
     def __init__(self, tk):
         super().__init__(tk)
 
-        self.rows_frame = Frame(self)
+        self.preset_buttons = Frame(self)
+        self.easy_button = Button(self.preset_buttons, text="Easy", command=lambda: self.set_mode("Easy"))
+        self.intermediate_button = Button(self.preset_buttons, text="Intermediate", command=lambda: self.set_mode("Intermediate"))
+        self.expert_button = Button(self.preset_buttons, text="Expert", command=lambda: self.set_mode("Expert"))
+        self.easy_button.grid(row=0, column=0)
+        self.intermediate_button.grid(row=0, column=1)
+        self.expert_button.grid(row=0, column=2)
+
+        self.board_settings = Frame(self)
+
+        self.rows_frame = Frame(self.board_settings)
         self.rows = IntVar(value=10)
         self.rows_label = Label(self.rows_frame, text="Rows", font=("Arial", 10))
         self.rows_input = Entry(self.rows_frame, textvariable=self.rows, width=5)
         self.rows_label.grid(row=0, column=0)
         self.rows_input.grid(row=0, column=1)
 
-        self.columns_frame = Frame(self)
+        self.columns_frame = Frame(self.board_settings)
         self.columns = IntVar(value=10)
         self.columns_label = Label(self.columns_frame, text="Columns", font=("Arial", 10))
         self.columns_input = Entry(self.columns_frame, textvariable=self.columns, width=5)
         self.columns_label.grid(row=0, column=0)
         self.columns_input.grid(row=0, column=1)
 
-        self.mines_frame = Frame(self)
+        self.mines_frame = Frame(self.board_settings)
         self.mines = IntVar(value=10)
         self.mines_label = Label(self.mines_frame, text="Mines", font=("Arial", 10))
         self.mines_input = Entry(self.mines_frame, textvariable=self.mines, width=5)
         self.mines_label.grid(row=0, column=0)
         self.mines_input.grid(row=0, column=1)
 
-        self.set_button = Button(self, text="Set", command=self.load_board)
+        self.set_button = Button(self.board_settings, text="Set", command=self.load_board)
 
-        self.rows_frame.grid(row=0, column=0)
-        self.columns_frame.grid(row=0, column=1)
-        self.mines_frame.grid(row=0, column=2)
-        self.set_button.grid(row=0, column=3)
+        self.rows_frame.grid(row=1, column=0)
+        self.columns_frame.grid(row=1, column=1)
+        self.mines_frame.grid(row=1, column=2)
+        self.set_button.grid(row=1, column=3)
+
+        self.preset_buttons.pack()
+        self.board_settings.pack()
 
         self.board: BoardGUI | None = None
         self.load_board()
 
-    # def set_mode(self, mode: Literal["Easy", "Intermediate", "Expert"]):
-    #     match mode.casefold():
-    #         case "easy":
-    #             self.rows.set(10)
-    #             self.columns.set(10)
-    #             self.mines.set(10)
-    #         case "intermediate":
-    #             self.rows.set(16)
-    #             self.columns.set(16)
-    #             self.mines.set(40)
-    #         case "expert":
-    #             self.rows.set(30)
-    #             self.columns.set(16)
-    #             self.mines.set(99)
+    def set_mode(self, mode: Literal["Easy", "Intermediate", "Expert"]):
+        match mode.casefold():
+            case "easy":
+                self.rows.set(10)
+                self.columns.set(10)
+                self.mines.set(10)
+            case "intermediate":
+                self.rows.set(16)
+                self.columns.set(16)
+                self.mines.set(40)
+            case "expert":
+                self.rows.set(16)
+                self.columns.set(30)
+                self.mines.set(99)
 
     def validate_mines(self):
         area = self.rows.get() * self.columns.get()
@@ -205,7 +218,7 @@ class MainGUI(Frame):
 
         self.validate_mines()
         self.board = BoardGUI(self, self.rows.get(), self.columns.get(), self.mines.get())
-        self.board.grid(row=1, columnspan=4)
+        self.board.pack()
         return self.board
 
 

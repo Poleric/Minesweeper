@@ -15,7 +15,6 @@ Main Files
 
 TODO
 ----
-- Tidy up the code
-- Implement basic presets for difficulties
+- Add number of mines left counter (number of unused flags left)
 - Resizeable tile sizes
 - No-guess generation
